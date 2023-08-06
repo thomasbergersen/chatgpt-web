@@ -30,6 +30,11 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
       lastContext: options,
       process: (chat: ChatMessage) => {
         res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
+
+        // LLaMA_CPP model
+        if (chat.detail.choices[0].finish_reason === 'stop')
+          res.end()
+
         firstChunk = false
       },
       systemMessage,
